@@ -1,4 +1,5 @@
 import React from 'react';
+import { Button, Pressable } from 'react-native'
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -21,14 +22,34 @@ const Tab = createBottomTabNavigator();
 export default function App() {
     return (
         <NavigationContainer>
-            <Tab.Navigator screenOptions={{tabBarActiveTintColor: "#000", tabBarInactiveTintColor: "#888"}}>
-                <Tab.Screen name="Home" component={HomeScreen} options={{tabBarIcon: ({color}) => <HomeIcon color={color}/> }}/>
-                <Tab.Screen name="Scan" component={ScanScreen} options={{tabBarIcon: ({color}) => <ScanIcon color={color}/> }}/>
-                <Tab.Screen name="Journal" component={JournalScreen} options={{tabBarIcon: ({color}) => <JournalIcon color={color}/> }}/>
-                <Tab.Screen name="Progress" component={ProgressScreen} options={{tabBarIcon: ({color}) => <ProgressIcon color={color}/> }}/>
-                <Tab.Screen name="Settings" component={SettingsScreen} options={{tabBarIcon: ({color}) => <SettingsIcon color={color}/> }}/>
-            </Tab.Navigator>
+            <Stack.Navigator>
+                <Stack.Screen name="Main" component={BottomTabs} options={{ headerShown: false }}/>
+                <Stack.Screen name="Settings" component={SettingsScreen} />
+            </Stack.Navigator>
         </NavigationContainer>
+    )
+}
+
+function BottomTabs() {
+    return (
+        <Tab.Navigator screenOptions={{ tabBarActiveTintColor: "black", tabBarInactiveTintColor: "grey" }}>
+            <Tab.Screen name="Home" component={HomeScreen} options={({ navigation }) => ({
+                tabBarIcon: ({ color }) => <HomeIcon color={color} />,
+                headerRight: () => <Pressable onPress={() => navigation.navigate("Settings")} style={{ paddingRight: 20 }}><SettingsIcon color="black" size={24} /></Pressable>
+            })} />
+            <Tab.Screen name="Scan" component={ScanScreen} options={({ navigation }) => ({
+                tabBarIcon: ({ color }) => <ScanIcon color={color} />,
+                headerRight: () => <Pressable onPress={() => navigation.navigate("Settings")} style={{ paddingRight: 20 }}><SettingsIcon color="black" size={24} /></Pressable>
+            })} />
+            <Tab.Screen name="Journal" component={JournalScreen} options={({ navigation }) => ({
+                tabBarIcon: ({ color }) => <JournalIcon color={color} />,
+                headerRight: () => <Pressable onPress={() => navigation.navigate("Settings")} style={{ paddingRight: 20 }}><SettingsIcon color="black" size={24} /></Pressable>
+            })} />
+            <Tab.Screen name="Progress" component={ProgressScreen} options={({ navigation }) => ({
+                tabBarIcon: ({ color }) => <ProgressIcon color={color} />,
+                headerRight: () => <Pressable onPress={() => navigation.navigate("Settings")} style={{ paddingRight: 20 }}><SettingsIcon color="black" size={24} /></Pressable>
+            })} />
+        </Tab.Navigator>
     )
 }
 

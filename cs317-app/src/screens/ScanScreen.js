@@ -7,12 +7,6 @@ export default function ScanScreen({ navigation }) {
       <Text style={styles.title}>Food Awareness</Text>
       <Text style={styles.title}>Scan</Text>
       <Text style={styles.title}>this is not medical advice</Text>
-
-      <Button title="Home" onPress={() => navigation.navigate("Home")} />
-      <Button title="Scan" onPress={() => navigation.navigate("Scan")} />
-      <Button title="Journal" onPress={() => navigation.navigate("Journal")} />
-      <Button title="Progress" onPress={() => navigation.navigate("Progress")} />
-      <Button title ="Settings" onPress={() => navigation.navigate("Settings")} />
     </View>
   ); 
 }
