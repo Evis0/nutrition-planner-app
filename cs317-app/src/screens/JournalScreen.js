@@ -5,7 +5,6 @@ export default function JournallScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Food Awareness</Text>
-      <Text style={styles.title}>Journal</Text>
       <Text style={styles.title}>this is not medical advice</Text>
     </View>
   ); 

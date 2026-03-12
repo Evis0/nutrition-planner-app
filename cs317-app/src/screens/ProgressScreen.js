@@ -5,7 +5,6 @@ export default function ProgressScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Food Awareness</Text>
-      <Text style={styles.title}>Progress</Text>
       <Text style={styles.title}>this is not medical advice</Text>
     </View>
   ); 
