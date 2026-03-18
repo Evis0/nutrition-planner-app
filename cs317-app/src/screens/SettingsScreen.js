@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, Button } from 'react-native';
 
-export default function JournallScreen({ navigation }) {
+export default function SettingsScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Food Awareness</Text>
