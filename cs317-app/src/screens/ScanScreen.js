@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Button } from 'react-native';
+import { View, Text, StyleSheet, Button, ScrollView, ActivityIndicator, Modal } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 
 
@@ -9,12 +9,35 @@ export default function ScanScreen({ navigation }) {
   const [scanned, setScanned] = useState(false);
   const [barcode, setBarcode] = useState('');
   const [permission, requestPermission] = useCameraPermissions();
-  const handleBarcodeScanned = ({ type, data }) => {
-  setScanned(true);
-  setBarcode(data);
-  console.log('Barcode type:', type);
-  console.log('Barcode data:', data);
-};
+  const handleBarcodeScanned = async ({ type, data }) => {
+    setScanned(true);
+    setBarcode(data);
+    console.log('Barcode type:', type);
+    console.log('Barcode data:', data);
+
+    try {
+      const apiResponse = await fetch(`https://world.openfoodfacts.org/api/v0/product/${data}.json`);
+      const json = await apiResponse.json();
+
+      if (json.status === 1){
+        setProduct(json.product);
+
+      } else {
+        setProduct(null);
+      }
+    
+    } catch (e) {
+      setProduct(null);
+    } finally {
+      setLoading(false);
+    }
+
+  }
+
+  const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [overlayVisible, setOverlayVisible] = useState(false);
+
   if (!permission) {
   return <Text>Requesting permission...</Text>;
   }
@@ -28,7 +51,7 @@ export default function ScanScreen({ navigation }) {
     );
   } 
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>Food Awareness</Text>
       <Text style={styles.title}>this is not medical advice</Text>
       <View style={styles.cameraContainer}>
@@ -43,15 +66,55 @@ export default function ScanScreen({ navigation }) {
 
       {scanned && (
         <Button
+          title = "View Product"
+          onPress={() =>{
+            setOverlayVisible(true);
+          }}
+        />
+      )}
+
+      {scanned && (
+        <Button
           title="Scan Again"
           onPress={() => {
             setScanned(false);
             setBarcode('');
+            setProduct(null);
           }}
         />
       )}
       <View style={styles.barcodeBox} />
-      </View>
+
+      <Modal
+        visible = {overlayVisible}
+        transparent = {true}
+        animationType = "slide"
+        onRequestClose = {() => setOverlayVisible(false)}
+
+      >
+        <View style = {styles.modalOverlay}>
+          <View style = {styles.modalBox}>
+            {loading ? (
+              <ActivityIndicator size = "large"/>
+
+            ) : product ? (
+              <>
+                <Text style = {styles.modelTitle}>{product.product_name || "Unknown Product"}</Text>
+                <Text>FILL THIS WITH INFO</Text>
+              </>
+            ) : (
+              <Text>Product not found in OpenFoodFacts</Text>
+            )}
+            <Button
+              title = "Close" onPress={() => setOverlayVisible(false)}
+            ></Button>
+          </View>
+
+        </View>
+
+
+      </Modal>
+    </ScrollView>
   ); 
 }
 
@@ -93,5 +156,23 @@ result: {
   marginBottom: 10,
   textAlign: 'center',
 },
+modalOverlay: {
+  flex: 1,
+  backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  justifyContent: 'center',
+  alignItems: 'center'
+
+},
+modalBox: {
+  gap: 10,
+  backgroundColor: 'white',
+  justifyContent: 'center',
+  alignItems: 'center'
+},
+modalTitle: {
+  fontSize: 20,
+  fontWeight: 'bold',
+  marginBottom: '8'
+}
 });
 
