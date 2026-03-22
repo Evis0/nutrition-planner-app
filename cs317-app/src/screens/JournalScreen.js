@@ -8,9 +8,21 @@ import {
   TextInput,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { ThemePreferenceContext } from '../context/ThemePreferenceContext';
 
 export default function JournalScreen() {
-  const secondaryBlue = '#DCEEFF';
+  const { effectiveTheme } = React.useContext(ThemePreferenceContext);
+  const isDark = effectiveTheme === 'dark';
+  const colors = {
+    page: isDark ? '#111315' : '#F8F9FB',
+    card: isDark ? '#1B1D21' : '#FFFFFF',
+    border: isDark ? '#2C3036' : '#E5E7EB',
+    textPrimary: isDark ? '#F5F7FA' : '#111827',
+    textSecondary: isDark ? '#D7DCE2' : '#4B5563',
+    textMuted: isDark ? '#8A919B' : '#6B7280',
+    accentSoft: isDark ? '#143020' : '#DCEEFF',
+    accent: isDark ? '#22C55E' : '#2563EB',
+  };
 
   const [energy, setEnergy] = useState('Medium');
   const [mood, setMood] = useState('Okay');
@@ -122,135 +134,142 @@ export default function JournalScreen() {
         style={[
           styles.optionButton,
           {
-            backgroundColor: isSelected ? secondaryBlue : '#F5F7FA',
-            borderColor: isSelected ? '#7BB7FF' : '#D9E2EC',
+            backgroundColor: isSelected ? colors.accentSoft : colors.card,
+            borderColor: isSelected ? colors.accent : colors.border,
           },
         ]}
         onPress={() => setSelectedValue(label)}
       >
-        <Text style={styles.optionText}>{label}</Text>
+        <Text
+          style={[
+            styles.optionText,
+            { color: isSelected ? colors.accent : colors.textMuted },
+          ]}
+        >
+          {label}
+        </Text>
       </Pressable>
     );
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>Daily Journal</Text>
-      <Text style={styles.subtitle}>
+    <ScrollView contentContainerStyle={[styles.container, { backgroundColor: colors.page }]}>
+      <Text style={[styles.title, { color: colors.textPrimary }]}>Daily Journal</Text>
+      <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
         Log how your food choices and habits may have affected your day
       </Text>
 
-      <View style={styles.card}>
-        <Text style={styles.sectionHeading}>How You Felt Today</Text>
+      <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border }]}>
+        <Text style={[styles.sectionHeading, { color: colors.textPrimary }]}>How You Felt Today</Text>
 
-        <Text style={styles.sectionTitle}>Energy</Text>
+        <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>Energy</Text>
         <View style={styles.optionsRow}>
           {['High', 'Medium', 'Low'].map((item) =>
             renderOption(item, energy, setEnergy)
           )}
         </View>
 
-        <Text style={styles.sectionTitle}>Mood</Text>
+        <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>Mood</Text>
         <View style={styles.optionsRow}>
           {['Good', 'Okay', 'Low'].map((item) =>
             renderOption(item, mood, setMood)
           )}
         </View>
 
-        <Text style={styles.sectionHeading}>Food Awareness</Text>
+        <Text style={[styles.sectionHeading, { color: colors.textPrimary }]}>Food Awareness</Text>
 
-        <Text style={styles.sectionTitle}>Meal Balance</Text>
+        <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>Meal Balance</Text>
         <View style={styles.optionsRow}>
           {['Balanced', 'Mixed', 'Poor'].map((item) =>
             renderOption(item, mealBalance, setMealBalance)
           )}
         </View>
 
-        <Text style={styles.sectionTitle}>Carb Awareness</Text>
+        <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>Carb Awareness</Text>
         <View style={styles.optionsRow}>
           {['Aware', 'Somewhat aware', 'Not aware'].map((item) =>
             renderOption(item, carbAwareness, setCarbAwareness)
           )}
         </View>
 
-        <Text style={styles.sectionTitle}>Sugar Cravings</Text>
+        <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>Sugar Cravings</Text>
         <View style={styles.optionsRow}>
           {['None', 'Mild', 'Strong'].map((item) =>
             renderOption(item, cravings, setCravings)
           )}
         </View>
 
-        <Text style={styles.sectionTitle}>Hunger Level</Text>
+        <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>Hunger Level</Text>
         <View style={styles.optionsRow}>
           {['Low', 'Medium', 'High'].map((item) =>
             renderOption(item, hunger, setHunger)
           )}
         </View>
 
-        <Text style={styles.sectionTitle}>Water Intake</Text>
+        <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>Water Intake</Text>
         <View style={styles.optionsRow}>
           {['Low', 'Okay', 'Good'].map((item) =>
             renderOption(item, water, setWater)
           )}
         </View>
 
-        <Text style={styles.sectionTitle}>Foods Scanned Today</Text>
+        <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>Foods Scanned Today</Text>
         {scannedFoods.map((food) => (
-          <View key={food.id} style={styles.foodCard}>
-            <Text style={styles.foodName}>{food.name}</Text>
-            <Text style={styles.foodText}>Barcode: {food.barcode}</Text>
-            <Text style={styles.foodText}>Meal: {food.mealType}</Text>
-            <Text style={styles.foodText}>Carbs: {food.carbs}</Text>
-            <Text style={styles.foodText}>Sugars: {food.sugars}</Text>
+          <View key={food.id} style={[styles.foodCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+            <Text style={[styles.foodName, { color: colors.textPrimary }]}>{food.name}</Text>
+            <Text style={[styles.foodText, { color: colors.textSecondary }]}>Barcode: {food.barcode}</Text>
+            <Text style={[styles.foodText, { color: colors.textSecondary }]}>Meal: {food.mealType}</Text>
+            <Text style={[styles.foodText, { color: colors.textSecondary }]}>Carbs: {food.carbs}</Text>
+            <Text style={[styles.foodText, { color: colors.textSecondary }]}>Sugars: {food.sugars}</Text>
           </View>
         ))}
 
-        <Text style={styles.sectionHeading}>Lifestyle</Text>
+        <Text style={[styles.sectionHeading, { color: colors.textPrimary }]}>Lifestyle</Text>
 
-        <Text style={styles.sectionTitle}>Post-Meal Activity</Text>
+        <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>Post-Meal Activity</Text>
         <View style={styles.optionsRow}>
           {['None', 'Light', 'Walk'].map((item) =>
             renderOption(item, postMealActivity, setPostMealActivity)
           )}
         </View>
 
-        <Text style={styles.sectionTitle}>Notes</Text>
+        <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>Notes</Text>
         <TextInput
-          style={styles.input}
+          style={[styles.input, { backgroundColor: colors.card, color: colors.textPrimary, borderColor: colors.border }]}
           placeholder="Optional note about meals, cravings, or energy today..."
-          placeholderTextColor="#829AB1"
+          placeholderTextColor={colors.textMuted}
           value={notes}
           onChangeText={setNotes}
           multiline
         />
 
-        <Pressable style={styles.addButton} onPress={addEntry}>
-          <Text style={styles.addButtonText}>Save Entry</Text>
+        <Pressable style={[styles.addButton, { backgroundColor: colors.accentSoft }]} onPress={addEntry}>
+          <Text style={[styles.addButtonText, { color: colors.textPrimary }]}>Save Entry</Text>
         </Pressable>
       </View>
 
-      <Text style={styles.recentHeading}>Recent Journal Entries</Text>
+      <Text style={[styles.recentHeading, { color: colors.textPrimary }]}>Recent Journal Entries</Text>
 
       {entries.map((entry) => (
-        <View key={entry.id} style={styles.entryCard}>
-          <Text style={styles.entryDate}>{entry.date}</Text>
-          <Text style={styles.entryText}>Energy: {entry.energy}</Text>
-          <Text style={styles.entryText}>Mood: {entry.mood}</Text>
-          <Text style={styles.entryText}>Meal Balance: {entry.mealBalance}</Text>
-          <Text style={styles.entryText}>
+        <View key={entry.id} style={[styles.entryCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+          <Text style={[styles.entryDate, { color: colors.textSecondary }]}>{entry.date}</Text>
+          <Text style={[styles.entryText, { color: colors.textSecondary }]}>Energy: {entry.energy}</Text>
+          <Text style={[styles.entryText, { color: colors.textSecondary }]}>Mood: {entry.mood}</Text>
+          <Text style={[styles.entryText, { color: colors.textSecondary }]}>Meal Balance: {entry.mealBalance}</Text>
+          <Text style={[styles.entryText, { color: colors.textSecondary }]}>
             Carb Awareness: {entry.carbAwareness}
           </Text>
-          <Text style={styles.entryText}>Cravings: {entry.cravings}</Text>
-          <Text style={styles.entryText}>Hunger: {entry.hunger}</Text>
-          <Text style={styles.entryText}>Water: {entry.water}</Text>
-          <Text style={styles.entryText}>
+          <Text style={[styles.entryText, { color: colors.textSecondary }]}>Cravings: {entry.cravings}</Text>
+          <Text style={[styles.entryText, { color: colors.textSecondary }]}>Hunger: {entry.hunger}</Text>
+          <Text style={[styles.entryText, { color: colors.textSecondary }]}>Water: {entry.water}</Text>
+          <Text style={[styles.entryText, { color: colors.textSecondary }]}>
             Post-Meal Activity: {entry.postMealActivity}
           </Text>
-          <Text style={styles.entryText}>
+          <Text style={[styles.entryText, { color: colors.textSecondary }]}>
             Scanned Food: {entry.scannedFoodName}
           </Text>
           {entry.notes ? (
-            <Text style={styles.entryNotes}>Notes: {entry.notes}</Text>
+            <Text style={[styles.entryNotes, { color: colors.textSecondary }]}>Notes: {entry.notes}</Text>
           ) : null}
         </View>
       ))}
@@ -262,17 +281,17 @@ const styles = StyleSheet.create({
   container: {
     padding: 20,
     paddingBottom: 40,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#F8F9FB',
   },
   title: {
     fontSize: 28,
     fontWeight: '700',
-    color: '#1F2933',
+    color: '#111827',
     marginBottom: 6,
   },
   subtitle: {
     fontSize: 15,
-    color: '#52606D',
+    color: '#4B5563',
     marginBottom: 20,
   },
   card: {
@@ -280,49 +299,51 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     padding: 18,
     borderWidth: 1,
-    borderColor: '#E4E7EB',
+    borderColor: '#E5E7EB',
     marginBottom: 24,
   },
   sectionHeading: {
     fontSize: 20,
     fontWeight: '700',
-    color: '#1F2933',
+    color: '#111827',
     marginTop: 8,
     marginBottom: 12,
   },
   sectionTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#243B53',
+    color: '#4B5563',
     marginBottom: 10,
     marginTop: 4,
   },
   optionsRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 10,
+    gap: 8,
     marginBottom: 10,
   },
   optionButton: {
-    paddingVertical: 10,
-    paddingHorizontal: 14,
-    borderRadius: 12,
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 8,
     borderWidth: 1,
+    backgroundColor: '#FFFFFF',
+    borderColor: '#D1D5DB',
   },
   optionText: {
     fontSize: 14,
-    color: '#243B53',
-    fontWeight: '500',
+    color: '#4B5563',
+    fontWeight: '600',
   },
   input: {
     minHeight: 90,
     borderWidth: 1,
-    borderColor: '#D9E2EC',
+    borderColor: '#E5E7EB',
     borderRadius: 12,
     padding: 12,
     fontSize: 14,
-    color: '#102A43',
-    backgroundColor: '#F8FBFF',
+    color: '#111827',
+    backgroundColor: '#FFFFFF',
     textAlignVertical: 'top',
   },
   addButton: {
@@ -335,55 +356,55 @@ const styles = StyleSheet.create({
   addButtonText: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#102A43',
+    color: '#111827',
   },
   recentHeading: {
     fontSize: 20,
     fontWeight: '700',
-    color: '#1F2933',
+    color: '#111827',
     marginBottom: 12,
   },
   foodCard: {
-    backgroundColor: '#F8FBFF',
+    backgroundColor: '#FFFFFF',
     borderRadius: 14,
     padding: 16,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: '#DCEEFF',
+    borderColor: '#E5E7EB',
   },
   foodName: {
     fontSize: 16,
     fontWeight: '700',
-    color: '#334E68',
+    color: '#111827',
     marginBottom: 8,
   },
   foodText: {
     fontSize: 14,
-    color: '#486581',
+    color: '#4B5563',
     marginBottom: 4,
   },
   entryCard: {
-    backgroundColor: '#F8FBFF',
+    backgroundColor: '#FFFFFF',
     borderRadius: 14,
     padding: 16,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: '#DCEEFF',
+    borderColor: '#E5E7EB',
   },
   entryDate: {
     fontSize: 15,
     fontWeight: '700',
-    color: '#334E68',
+    color: '#4B5563',
     marginBottom: 8,
   },
   entryText: {
     fontSize: 14,
-    color: '#486581',
+    color: '#4B5563',
     marginBottom: 4,
   },
   entryNotes: {
     fontSize: 14,
-    color: '#334E68',
+    color: '#4B5563',
     marginTop: 6,
     fontStyle: 'italic',
   },

@@ -75,9 +75,9 @@ export default function ScanScreen({ navigation }) {
     );
   } 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Food Awareness</Text>
-      <Text style={styles.title}>this is not medical advice</Text>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <Text style={[styles.title, { color: colors.title }]}>Food Awareness</Text>
+      <Text style={[styles.title, { color: colors.title }]}>this is not medical advice</Text>
       <View style={styles.cameraContainer}>
       <CameraView
        style={styles.camera}
@@ -86,7 +86,7 @@ export default function ScanScreen({ navigation }) {
       <View style={styles.barcodeBox} />
       </View>
 
-      {barcode ? <Text style={styles.result}>Scanned barcode: {barcode}</Text> : null}
+      {barcode ? <Text style={[styles.result, { color: colors.text }]}>Scanned barcode: {barcode}</Text> : null}
 
       {scanned && (
         <Button
@@ -109,17 +109,17 @@ export default function ScanScreen({ navigation }) {
           styles.modalOverlay,
           {backgroundColor: sugarColour(product)}
         ]}>
-          <View style = {styles.modalBox}>
+          <View style = {[styles.modalBox, { backgroundColor: colors.card }]}>
             {loading ? (
               <ActivityIndicator size = "large"/>
 
             ) : product ? (
               <>
-                <Text style = {styles.modalTitle}>{product.product_name || "Unknown Product"}</Text>
-                <Text>FILL THIS WITH INFO</Text>
+                <Text style = {[styles.modalTitle, { color: colors.title }]}>{product.product_name || "Unknown Product"}</Text>
+                <Text style={{ color: colors.text }}>FILL THIS WITH INFO</Text>
               </>
             ) : (
-              <Text>Product not found in OpenFoodFacts</Text>
+              <Text style={{ color: colors.text }}>Product not found in OpenFoodFacts</Text>
             )}
             <Button
               title = "Close" onPress={() => {
@@ -132,7 +132,7 @@ export default function ScanScreen({ navigation }) {
           </View>
         </View>
       </Modal>
-    </ScrollView>
+    </View>
   ); 
 }
 
@@ -141,10 +141,12 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     justifyContent: 'flex-start',
     alignItems: 'center',
+    backgroundColor: '#F8F9FB',
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
+    color: '#111827',
   },
   cameraContainer: {
   width: '90%',
@@ -173,6 +175,7 @@ result: {
   marginTop: 20,
   marginBottom: 10,
   textAlign: 'center',
+  color: '#111827',
 },
 modalOverlay: {
   flex: 1,
@@ -183,7 +186,7 @@ modalOverlay: {
 modalBox: {
   width: '80%',
   height: 250,
-  backgroundColor: 'white',
+  backgroundColor: '#FFFFFF',
   borderRadius:12,
   padding:24,
   justifyContent: 'space-between',
@@ -192,7 +195,8 @@ modalBox: {
 modalTitle: {
   fontSize: 20,
   fontWeight: 'bold',
-  marginBottom: '8'
+  marginBottom: 8,
+  color: '#111827'
 }
 });
 
