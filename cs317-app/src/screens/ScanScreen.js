@@ -12,6 +12,8 @@ export default function ScanScreen({ navigation }) {
   const handleBarcodeScanned = async ({ type, data }) => {
     setScanned(true);
     setBarcode(data);
+    setLoading(true);
+    setOverlayVisible(true);
     console.log('Barcode type:', type);
     console.log('Barcode data:', data);
 
@@ -21,7 +23,6 @@ export default function ScanScreen({ navigation }) {
 
       if (json.status === 1){
         setProduct(json.product);
-
       } else {
         setProduct(null);
       }
@@ -31,12 +32,26 @@ export default function ScanScreen({ navigation }) {
     } finally {
       setLoading(false);
     }
-
   }
 
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(false);
   const [overlayVisible, setOverlayVisible] = useState(false);
+  const sugarColour = (product) => {
+    if(!product){
+      return 'rgba(0,0,0,0.5)';
+    }
+
+    const sugar = product.nutriments.sugars_100g
+
+    if(sugar < 5) {
+      return 'rgba(0,175,0,0.5)';
+    } else if(sugar < 15) {
+      return 'rgba(255,165,0,0.5)';
+    } else {
+      return 'rgba(212, 4, 4, 0.5)';
+    }
+  }
 
   if (!permission) {
   return <Text>Requesting permission...</Text>;
@@ -64,14 +79,14 @@ export default function ScanScreen({ navigation }) {
 
       {barcode ? <Text style={styles.result}>Scanned barcode: {barcode}</Text> : null}
 
-      {scanned && (
+      {/* {scanned && (
         <Button
           title = "View Product"
           onPress={() =>{
             setOverlayVisible(true);
           }}
         />
-      )}
+      )} */}
 
       {scanned && (
         <Button
@@ -90,27 +105,32 @@ export default function ScanScreen({ navigation }) {
         onRequestClose = {() => setOverlayVisible(false)}
 
       >
-        <View style = {styles.modalOverlay}>
+        <View style = {[
+          styles.modalOverlay,
+          {backgroundColor: sugarColour(product)}
+        ]}>
           <View style = {styles.modalBox}>
             {loading ? (
               <ActivityIndicator size = "large"/>
 
             ) : product ? (
               <>
-                <Text style = {styles.modelTitle}>{product.product_name || "Unknown Product"}</Text>
+                <Text style = {styles.modalTitle}>{product.product_name || "Unknown Product"}</Text>
                 <Text>FILL THIS WITH INFO</Text>
               </>
             ) : (
               <Text>Product not found in OpenFoodFacts</Text>
             )}
             <Button
-              title = "Close" onPress={() => setOverlayVisible(false)}
+              title = "Close" onPress={() => {
+                setOverlayVisible(false);
+                setProduct(null);
+                setBarcode('');
+                setScanned(false);
+              }}
             ></Button>
           </View>
-
         </View>
-
-
       </Modal>
     </ScrollView>
   ); 
@@ -159,12 +179,14 @@ modalOverlay: {
   backgroundColor: 'rgba(0, 0, 0, 0.5)',
   justifyContent: 'center',
   alignItems: 'center'
-
 },
 modalBox: {
-  gap: 10,
+  width: '80%',
+  height: 250,
   backgroundColor: 'white',
-  justifyContent: 'center',
+  borderRadius:12,
+  padding:24,
+  justifyContent: 'space-between',
   alignItems: 'center'
 },
 modalTitle: {
