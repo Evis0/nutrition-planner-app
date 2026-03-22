@@ -83,8 +83,6 @@ export default function ScanScreen({ navigation }) {
           }}
         />
       )}
-      <View style={styles.barcodeBox} />
-
       <Modal
         visible = {overlayVisible}
         transparent = {true}
@@ -120,7 +118,7 @@ export default function ScanScreen({ navigation }) {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     justifyContent: 'flex-start',
     alignItems: 'center',
   },
