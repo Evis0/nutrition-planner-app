@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Button } from 'react-native';
+import { View, Text, StyleSheet, Button, ScrollView, ActivityIndicator, Modal } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { ThemePreferenceContext } from '../context/ThemePreferenceContext';
 
@@ -18,12 +18,50 @@ export default function ScanScreen({ navigation }) {
   const [scanned, setScanned] = useState(false);
   const [barcode, setBarcode] = useState('');
   const [permission, requestPermission] = useCameraPermissions();
-  const handleBarcodeScanned = ({ type, data }) => {
-  setScanned(true);
-  setBarcode(data);
-  console.log('Barcode type:', type);
-  console.log('Barcode data:', data);
-};
+  const handleBarcodeScanned = async ({ type, data }) => {
+    setScanned(true);
+    setBarcode(data);
+    setLoading(true);
+    setOverlayVisible(true);
+    console.log('Barcode type:', type);
+    console.log('Barcode data:', data);
+
+    try {
+      const apiResponse = await fetch(`https://world.openfoodfacts.org/api/v0/product/${data}.json`);
+      const json = await apiResponse.json();
+
+      if (json.status === 1){
+        setProduct(json.product);
+      } else {
+        setProduct(null);
+      }
+    
+    } catch (e) {
+      setProduct(null);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [overlayVisible, setOverlayVisible] = useState(false);
+  const sugarColour = (product) => {
+    if(!product){
+      return 'rgba(0,0,0,0.5)';
+    }
+
+    const sugar = product.nutriments.sugars_100g
+
+    if(sugar < 5) {
+      return 'rgba(0,175,0,0.5)';
+    } else if(sugar < 15) {
+      return 'rgba(255,165,0,0.5)';
+    } else {
+      return 'rgba(212, 4, 4, 0.5)';
+    }
+  }
+
   if (!permission) {
   return <Text style={{ color: colors.title }}>Requesting permission...</Text>;
   }
@@ -37,9 +75,9 @@ export default function ScanScreen({ navigation }) {
     );
   } 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <Text style={[styles.title, { color: colors.title }]}>Food Awareness</Text>
-      <Text style={[styles.title, { color: colors.subtitle }]}>this is not medical advice</Text>
+    <View style={styles.container}>
+      <Text style={styles.title}>Food Awareness</Text>
+      <Text style={styles.title}>this is not medical advice</Text>
       <View style={styles.cameraContainer}>
       <CameraView
        style={styles.camera}
@@ -48,7 +86,7 @@ export default function ScanScreen({ navigation }) {
       <View style={styles.barcodeBox} />
       </View>
 
-      {barcode ? <Text style={[styles.result, { color: colors.text }]}>Scanned barcode: {barcode}</Text> : null}
+      {barcode ? <Text style={styles.result}>Scanned barcode: {barcode}</Text> : null}
 
       {scanned && (
         <Button
@@ -56,17 +94,51 @@ export default function ScanScreen({ navigation }) {
           onPress={() => {
             setScanned(false);
             setBarcode('');
+            setProduct(null);
           }}
         />
       )}
-      <View style={styles.barcodeBox} />
-      </View>
+      <Modal
+        visible = {overlayVisible}
+        transparent = {true}
+        animationType = "slide"
+        onRequestClose = {() => setOverlayVisible(false)}
+
+      >
+        <View style = {[
+          styles.modalOverlay,
+          {backgroundColor: sugarColour(product)}
+        ]}>
+          <View style = {styles.modalBox}>
+            {loading ? (
+              <ActivityIndicator size = "large"/>
+
+            ) : product ? (
+              <>
+                <Text style = {styles.modalTitle}>{product.product_name || "Unknown Product"}</Text>
+                <Text>FILL THIS WITH INFO</Text>
+              </>
+            ) : (
+              <Text>Product not found in OpenFoodFacts</Text>
+            )}
+            <Button
+              title = "Close" onPress={() => {
+                setOverlayVisible(false);
+                setProduct(null);
+                setBarcode('');
+                setScanned(false);
+              }}
+            ></Button>
+          </View>
+        </View>
+      </Modal>
+    </ScrollView>
   ); 
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     justifyContent: 'flex-start',
     alignItems: 'center',
   },
@@ -102,5 +174,25 @@ result: {
   marginBottom: 10,
   textAlign: 'center',
 },
+modalOverlay: {
+  flex: 1,
+  backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  justifyContent: 'center',
+  alignItems: 'center'
+},
+modalBox: {
+  width: '80%',
+  height: 250,
+  backgroundColor: 'white',
+  borderRadius:12,
+  padding:24,
+  justifyContent: 'space-between',
+  alignItems: 'center'
+},
+modalTitle: {
+  fontSize: 20,
+  fontWeight: 'bold',
+  marginBottom: '8'
+}
 });
 
