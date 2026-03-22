@@ -1,11 +1,20 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Button } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
+import { ThemePreferenceContext } from '../context/ThemePreferenceContext';
 
 
 
 
 export default function ScanScreen({ navigation }) {
+  const { effectiveTheme } = React.useContext(ThemePreferenceContext);
+  const isDark = effectiveTheme === 'dark';
+  const colors = {
+    background: isDark ? '#111315' : '#F8F9FB',
+    title: isDark ? '#F5F7FA' : '#111827',
+    subtitle: isDark ? '#C7CCD4' : '#111827',
+    text: isDark ? '#E5E7EB' : '#111827',
+  };
   const [scanned, setScanned] = useState(false);
   const [barcode, setBarcode] = useState('');
   const [permission, requestPermission] = useCameraPermissions();
@@ -16,21 +25,21 @@ export default function ScanScreen({ navigation }) {
   console.log('Barcode data:', data);
 };
   if (!permission) {
-  return <Text>Requesting permission...</Text>;
+  return <Text style={{ color: colors.title }}>Requesting permission...</Text>;
   }
 
   if (!permission.granted) {
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Camera Permission Required</Text>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <Text style={[styles.title, { color: colors.title }]}>Camera Permission Required</Text>
       <Button title="Grant Permission" onPress={requestPermission} />
     </View>
     );
   } 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Food Awareness</Text>
-      <Text style={styles.title}>this is not medical advice</Text>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <Text style={[styles.title, { color: colors.title }]}>Food Awareness</Text>
+      <Text style={[styles.title, { color: colors.subtitle }]}>this is not medical advice</Text>
       <View style={styles.cameraContainer}>
       <CameraView
        style={styles.camera}
@@ -39,7 +48,7 @@ export default function ScanScreen({ navigation }) {
       <View style={styles.barcodeBox} />
       </View>
 
-      {barcode ? <Text style={styles.result}>Scanned barcode: {barcode}</Text> : null}
+      {barcode ? <Text style={[styles.result, { color: colors.text }]}>Scanned barcode: {barcode}</Text> : null}
 
       {scanned && (
         <Button
