@@ -113,18 +113,3 @@ function BottomTabs() {
         </Tab.Navigator>
     )
 }
-
-// export default function App(){
-//     return (
-//         <NavigationContainer>
-//             <BottomTabs />
-//             <Stack.Navigator> 
-//               <Stack.Screen name="Home" component={HomeScreen} />
-//               <Stack.Screen name="Scan" component={ScanScreen} />
-//               <Stack.Screen name="Progress" component={ProgressScreen} />
-//               <Stack.Screen name="Journal" component={JournalScreen} />
-//               <Stack.Screen name="Settings" component={SettingScreen} />
-//             </Stack.Navigator>
-//         </NavigationContainer>  
-//     )
-// }
