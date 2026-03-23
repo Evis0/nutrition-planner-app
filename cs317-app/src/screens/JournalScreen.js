@@ -72,7 +72,7 @@ export default function JournalScreen() {
       mealBalance: 'Balanced',
       carbAwareness: 'Aware',
       cravings: 'None',
-      postMealActivity: 'Walk',
+      steps: '22',
       water: 'Good',
       hunger: 'Low',
       scannedFoodName: 'Dummy Cereal Bar',
@@ -86,7 +86,7 @@ export default function JournalScreen() {
       mealBalance: 'Mixed',
       carbAwareness: 'Somewhat aware',
       cravings: 'Strong',
-      postMealActivity: 'None',
+      steps: '26',
       water: 'Low',
       hunger: 'High',
       scannedFoodName: 'Dummy Cereal Bar',
@@ -126,7 +126,7 @@ export default function JournalScreen() {
       mealBalance,
       carbAwareness,
       cravings,
-      postMealActivity,
+      steps,
       water,
       hunger,
       scannedFoodName: scannedFoods[0]?.name || 'None',
@@ -145,6 +145,7 @@ export default function JournalScreen() {
     } catch (error) {
       console.log('Error saving journal entries:', error);
     }
+    setSteps(0);
   };
 
   const renderOption = (label, selectedValue, setSelectedValue) => {
@@ -283,7 +284,7 @@ export default function JournalScreen() {
           <Text style={[styles.entryText, { color: colors.textSecondary }]}>Hunger: {entry.hunger}</Text>
           <Text style={[styles.entryText, { color: colors.textSecondary }]}>Water: {entry.water}</Text>
           <Text style={[styles.entryText, { color: colors.textSecondary }]}>
-            Post-Meal Activity: {entry.postMealActivity}
+            Post-Meal Activity: {entry.steps} Steps
           </Text>
           <Text style={[styles.entryText, { color: colors.textSecondary }]}>
             Scanned Food: {entry.scannedFoodName}
