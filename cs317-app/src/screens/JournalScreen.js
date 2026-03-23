@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ThemePreferenceContext } from '../context/ThemePreferenceContext';
+import {ScannedFoodContext} from '../context/ScannedFoodContext';
 
 export default function JournalScreen() {
   const { effectiveTheme } = React.useContext(ThemePreferenceContext);
@@ -34,16 +35,18 @@ export default function JournalScreen() {
   const [hunger, setHunger] = useState('Medium');
   const [notes, setNotes] = useState('');
 
-  const [scannedFoods] = useState([
-    {
-      id: 1,
-      barcode: '8410076901026',
-      name: 'Dummy Cereal Bar',
-      mealType: 'Snack',
-      carbs: '24g',
-      sugars: '11g',
-    },
-  ]);
+  // const [scannedFoods] = useState([
+  //   {
+  //     id: 1,
+  //     barcode: '8410076901026',
+  //     name: 'Dummy Cereal Bar',
+  //     mealType: 'Snack',
+  //     carbs: '24g',
+  //     sugars: '11g',
+  //   },
+  // ]);
+
+  const {scannedFoods} = React.useContext(ScannedFoodContext);
 
   const [entries, setEntries] = useState([
     {

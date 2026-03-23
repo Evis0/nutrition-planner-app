@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, Button, ScrollView, ActivityIndicator, Modal } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { ThemePreferenceContext } from '../context/ThemePreferenceContext';
+import { ScannedFoodContext } from '../context/ScannedFoodContext';
 
 
 
@@ -16,6 +17,7 @@ export default function ScanScreen({ navigation }) {
     text: isDark ? '#E5E7EB' : '#111827',
     card: isDark ? '#111315' : '#F8F9FB'
   };
+  const {addScannedFood} = React.useContext(ScannedFoodContext);
   const [scanned, setScanned] = useState(false);
   const [barcode, setBarcode] = useState('');
   const [permission, requestPermission] = useCameraPermissions();
@@ -127,12 +129,12 @@ export default function ScanScreen({ navigation }) {
               <Text style={{ color: colors.text }}>Product not found in OpenFoodFacts</Text>
             )}
             <View style = {styles.modalButtonGroup}>
-              {/* {product && (
+              {product && (
                 <Button
                   title = "Add to Journal"
-                  onPress = {() => }
+                  onPress = {() => addScannedFood(product)}
                 ></Button>
-              )} */}
+              )}
               <Button
                 title = "Close" onPress={() => {
                   setOverlayVisible(false);

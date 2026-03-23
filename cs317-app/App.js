@@ -4,6 +4,7 @@ import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { ThemePreferenceContext } from './src/context/ThemePreferenceContext';
+import { ScannedFoodContext } from './src/context/ScannedFoodContext';
 
 import SettingsScreen from './src/screens/SettingsScreen';
 import HomeScreen from './src/screens/HomeScreen';
@@ -51,21 +52,41 @@ export default function App() {
         setThemePreference,
     }), [themePreference, effectiveTheme]);
 
+    const [scannedFoods, updateScannedFoods] = React.useState([]);
+
+    const addScannedFood = (product) => {
+        updateScannedFoods(prev => [...prev, {
+            id: Date.now(),
+            barcode: product.code,
+            name: product.product_name,
+            mealType: 'Snack',
+            carbs: product.nutriments.carbohydrates_100g + 'g',
+            sugars: product.nutriments.sugars_100g + 'g'
+        }]);
+    }
+
+    const scannedFoodsValue = React.useMemo(() => ({
+        scannedFoods,
+        addScannedFood
+    }), [scannedFoods]);
+
     return (
         <ThemePreferenceContext.Provider value={contextValue}>
-            <NavigationContainer theme={navigationTheme}>
-                <Stack.Navigator
-                    screenOptions={{
-                        headerStyle: { backgroundColor: navigationTheme.colors.card },
-                        headerTintColor: navigationTheme.colors.text,
-                        headerShadowVisible: false,
-                        contentStyle: { backgroundColor: navigationTheme.colors.background },
-                    }}
-                >
-                    <Stack.Screen name="Main" component={BottomTabs} options={{ headerShown: false }}/>
-                    <Stack.Screen name="Settings" component={SettingsScreen} />
-                </Stack.Navigator>
-            </NavigationContainer>
+            <ScannedFoodContext.Provider value = {scannedFoodsValue}>
+                <NavigationContainer theme={navigationTheme}>
+                    <Stack.Navigator
+                        screenOptions={{
+                            headerStyle: { backgroundColor: navigationTheme.colors.card },
+                            headerTintColor: navigationTheme.colors.text,
+                            headerShadowVisible: false,
+                            contentStyle: { backgroundColor: navigationTheme.colors.background },
+                        }}
+                    >
+                        <Stack.Screen name="Main" component={BottomTabs} options={{ headerShown: false }}/>
+                        <Stack.Screen name="Settings" component={SettingsScreen} />
+                    </Stack.Navigator>
+                </NavigationContainer>
+            </ScannedFoodContext.Provider>
         </ThemePreferenceContext.Provider>
     )
 }
