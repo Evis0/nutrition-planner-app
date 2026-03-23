@@ -44,7 +44,6 @@ export default function JournalScreen() {
         if (movement > 1.4){
           setSteps(steps => steps +1)
         }
-        console.log(steps)
     });
     subset(sub)
   }
