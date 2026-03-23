@@ -1,8 +1,9 @@
 import React from 'react';
-import { Button, Pressable } from 'react-native'
-import { NavigationContainer } from '@react-navigation/native';
+import { Pressable, useColorScheme } from 'react-native'
+import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { ThemePreferenceContext } from './src/context/ThemePreferenceContext';
 
 import SettingsScreen from './src/screens/SettingsScreen';
 import HomeScreen from './src/screens/HomeScreen';
@@ -20,34 +21,94 @@ const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
 export default function App() {
+    const systemColorScheme = useColorScheme();
+    const [themePreference, setThemePreference] = React.useState('system');
+
+    const effectiveTheme =
+        themePreference === 'system'
+            ? (systemColorScheme === 'dark' ? 'dark' : 'light')
+            : themePreference;
+
+    const navigationTheme = React.useMemo(() => {
+        const baseTheme = effectiveTheme === 'dark' ? DarkTheme : DefaultTheme;
+
+        return {
+            ...baseTheme,
+            colors: {
+                ...baseTheme.colors,
+                primary: effectiveTheme === 'dark' ? '#22C55E' : '#2563EB',
+                background: effectiveTheme === 'dark' ? '#111315' : '#F8F9FB',
+                card: effectiveTheme === 'dark' ? '#1B1D21' : '#FFFFFF',
+                text: effectiveTheme === 'dark' ? '#F5F7FA' : '#161718',
+                border: effectiveTheme === 'dark' ? '#2C3036' : '#E5E7EB',
+            },
+        };
+    }, [effectiveTheme]);
+
+    const contextValue = React.useMemo(() => ({
+        themePreference,
+        effectiveTheme,
+        setThemePreference,
+    }), [themePreference, effectiveTheme]);
+
     return (
-        <NavigationContainer>
-            <Stack.Navigator>
-                <Stack.Screen name="Main" component={BottomTabs} options={{ headerShown: false }}/>
-                <Stack.Screen name="Settings" component={SettingsScreen} />
-            </Stack.Navigator>
-        </NavigationContainer>
+        <ThemePreferenceContext.Provider value={contextValue}>
+            <NavigationContainer theme={navigationTheme}>
+                <Stack.Navigator
+                    screenOptions={{
+                        headerStyle: { backgroundColor: navigationTheme.colors.card },
+                        headerTintColor: navigationTheme.colors.text,
+                        headerShadowVisible: false,
+                        contentStyle: { backgroundColor: navigationTheme.colors.background },
+                    }}
+                >
+                    <Stack.Screen name="Main" component={BottomTabs} options={{ headerShown: false }}/>
+                    <Stack.Screen name="Settings" component={SettingsScreen} />
+                </Stack.Navigator>
+            </NavigationContainer>
+        </ThemePreferenceContext.Provider>
     )
 }
 
 function BottomTabs() {
+    const { effectiveTheme } = React.useContext(ThemePreferenceContext);
+    const isDark = effectiveTheme === 'dark';
+
     return (
-        <Tab.Navigator screenOptions={{ tabBarActiveTintColor: "black", tabBarInactiveTintColor: "grey" }}>
+        <Tab.Navigator
+            screenOptions={{
+                tabBarActiveTintColor: isDark ? '#FFFFFF' : '#161718',
+                tabBarInactiveTintColor: isDark ? '#8A919B' : '#161718',
+                tabBarStyle: {
+                    backgroundColor: isDark ? '#1B1D21' : '#FFFFFF',
+                    borderTopColor: isDark ? '#2C3036' : '#E5E7EB',
+                },
+                headerStyle: {
+                    backgroundColor: isDark ? '#1B1D21' : '#FFFFFF',
+                },
+                headerTitleStyle: {
+                    color: isDark ? '#F5F7FA' : '#161718',
+                },
+                sceneStyle: {
+                    backgroundColor: isDark ? '#111315' : '#F8F9FB',
+                },
+            }}
+        >
             <Tab.Screen name="Home" component={HomeScreen} options={({ navigation }) => ({
                 tabBarIcon: ({ color }) => <HomeIcon color={color} />,
-                headerRight: () => <Pressable onPress={() => navigation.navigate("Settings")} style={{ paddingRight: 20 }}><SettingsIcon color="black" size={24} /></Pressable>
+                headerRight: () => <Pressable onPress={() => navigation.navigate("Settings")} style={{ paddingRight: 20 }}><SettingsIcon color={isDark ? '#F5F7FA' : '#161718'} size={24} /></Pressable>
             })} />
             <Tab.Screen name="Scan" component={ScanScreen} options={({ navigation }) => ({
                 tabBarIcon: ({ color }) => <ScanIcon color={color} />,
-                headerRight: () => <Pressable onPress={() => navigation.navigate("Settings")} style={{ paddingRight: 20 }}><SettingsIcon color="black" size={24} /></Pressable>
+                headerRight: () => <Pressable onPress={() => navigation.navigate("Settings")} style={{ paddingRight: 20 }}><SettingsIcon color={isDark ? '#F5F7FA' : '#161718'} size={24} /></Pressable>
             })} />
             <Tab.Screen name="Journal" component={JournalScreen} options={({ navigation }) => ({
                 tabBarIcon: ({ color }) => <JournalIcon color={color} />,
-                headerRight: () => <Pressable onPress={() => navigation.navigate("Settings")} style={{ paddingRight: 20 }}><SettingsIcon color="black" size={24} /></Pressable>
+                headerRight: () => <Pressable onPress={() => navigation.navigate("Settings")} style={{ paddingRight: 20 }}><SettingsIcon color={isDark ? '#F5F7FA' : '#161718'} size={24} /></Pressable>
             })} />
             <Tab.Screen name="Progress" component={ProgressScreen} options={({ navigation }) => ({
                 tabBarIcon: ({ color }) => <ProgressIcon color={color} />,
-                headerRight: () => <Pressable onPress={() => navigation.navigate("Settings")} style={{ paddingRight: 20 }}><SettingsIcon color="black" size={24} /></Pressable>
+                headerRight: () => <Pressable onPress={() => navigation.navigate("Settings")} style={{ paddingRight: 20 }}><SettingsIcon color={isDark ? '#F5F7FA' : '#161718'} size={24} /></Pressable>
             })} />
         </Tab.Navigator>
     )
