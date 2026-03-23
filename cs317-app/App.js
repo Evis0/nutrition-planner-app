@@ -99,7 +99,7 @@ function BottomTabs() {
         <Tab.Navigator
             screenOptions={{
                 tabBarActiveTintColor: isDark ? '#FFFFFF' : '#161718',
-                tabBarInactiveTintColor: isDark ? '#8A919B' : '#161718',
+                tabBarInactiveTintColor: isDark ? '#8A919B' : '#9CA3AF',
                 tabBarStyle: {
                     backgroundColor: isDark ? '#1B1D21' : '#FFFFFF',
                     borderTopColor: isDark ? '#2C3036' : '#E5E7EB',
@@ -134,18 +134,3 @@ function BottomTabs() {
         </Tab.Navigator>
     )
 }
-
-// export default function App(){
-//     return (
-//         <NavigationContainer>
-//             <BottomTabs />
-//             <Stack.Navigator> 
-//               <Stack.Screen name="Home" component={HomeScreen} />
-//               <Stack.Screen name="Scan" component={ScanScreen} />
-//               <Stack.Screen name="Progress" component={ProgressScreen} />
-//               <Stack.Screen name="Journal" component={JournalScreen} />
-//               <Stack.Screen name="Settings" component={SettingScreen} />
-//             </Stack.Navigator>
-//         </NavigationContainer>  
-//     )
-// }
