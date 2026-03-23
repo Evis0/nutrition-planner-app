@@ -14,6 +14,7 @@ export default function ScanScreen({ navigation }) {
     title: isDark ? '#F5F7FA' : '#111827',
     subtitle: isDark ? '#C7CCD4' : '#111827',
     text: isDark ? '#E5E7EB' : '#111827',
+    card: isDark ? '#111315' : '#F8F9FB'
   };
   const [scanned, setScanned] = useState(false);
   const [barcode, setBarcode] = useState('');
@@ -116,19 +117,31 @@ export default function ScanScreen({ navigation }) {
             ) : product ? (
               <>
                 <Text style = {[styles.modalTitle, { color: colors.title }]}>{product.product_name || "Unknown Product"}</Text>
-                <Text style={{ color: colors.text }}>FILL THIS WITH INFO</Text>
+                <Text style={{ color: colors.text }}>Nutri-score: {product.nutrition_grades.toUpperCase()}</Text>
+                <Text style={{ color: colors.text }}>Sugar Content: {product.nutriments.sugars_100g}g</Text>
+                <Text style={{ color: colors.text }}>Carb Content: {product.nutriments.carbohydrates_100g}g</Text>
+                
               </>
+              
             ) : (
               <Text style={{ color: colors.text }}>Product not found in OpenFoodFacts</Text>
             )}
-            <Button
-              title = "Close" onPress={() => {
-                setOverlayVisible(false);
-                setProduct(null);
-                setBarcode('');
-                setScanned(false);
-              }}
-            ></Button>
+            <View style = {styles.modalButtonGroup}>
+              {/* {product && (
+                <Button
+                  title = "Add to Journal"
+                  onPress = {() => }
+                ></Button>
+              )} */}
+              <Button
+                title = "Close" onPress={() => {
+                  setOverlayVisible(false);
+                  setProduct(null);
+                  setBarcode('');
+                  setScanned(false);
+                }}
+              ></Button>
+            </View>
           </View>
         </View>
       </Modal>
@@ -197,6 +210,9 @@ modalTitle: {
   fontWeight: 'bold',
   marginBottom: 8,
   color: '#111827'
+},
+modalButtonGroup: {
+  flexDirection: 'row'
 }
 });
 
