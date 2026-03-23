@@ -249,9 +249,9 @@ export default function JournalScreen() {
 
         <Text style={[styles.sectionHeading, { color: colors.textPrimary }]}>Lifestyle</Text>
 
-        <Text style={styles.sectionTitle}>Post-Meal Activity</Text>
+        <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>Post-Meal Activity</Text>
         <View style={styles.steps}>
-            <Text>Steps Taken: {steps}</Text>
+            <Text style={{ color: colors.textPrimary }}>Steps Taken: {steps}</Text>
         </View>
 
         <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>Notes</Text>

@@ -78,7 +78,7 @@ function BottomTabs() {
         <Tab.Navigator
             screenOptions={{
                 tabBarActiveTintColor: isDark ? '#FFFFFF' : '#161718',
-                tabBarInactiveTintColor: isDark ? '#8A919B' : '#161718',
+                tabBarInactiveTintColor: isDark ? '#8A919B' : '#9CA3AF',
                 tabBarStyle: {
                     backgroundColor: isDark ? '#1B1D21' : '#FFFFFF',
                     borderTopColor: isDark ? '#2C3036' : '#E5E7EB',
