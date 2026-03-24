@@ -5,6 +5,7 @@ import { useFocusEffect } from '@react-navigation/native';
 
 import { ThemePreferenceContext } from '../context/ThemePreferenceContext';
 import { PlanContext } from '../context/PlanContext';
+import { ScannedFoodContext } from '../context/ScannedFoodContext';
 
 export default function ProgressScreen() {
   const { effectiveTheme } = useContext(ThemePreferenceContext);
@@ -54,9 +55,16 @@ export default function ProgressScreen() {
       if (latest.energy === 'High') score += 40;
 
     } else if (selectedPlan === 'Low-Sugar Prevention Plan') {
-      if (latest.cravings === 'None') score += 50;
-      if (latest.mealBalance === 'Balanced') score += 50;
-
+      if (latest.cravings === 'None') score += 15;
+      if (latest.mealBalance === 'Balanced') score += 10;
+      for (let i = 0; i < ScannedFoodContext.length; i++) {
+        if (ScannedFoodContext[i].name === latest.scannedFoodName) {
+            sugar = ScannedFoodContext[i].sugar;
+            break;
+           }
+      if (sugar < 30){ score += 75;}
+      else if(sugar < 50){score +=30}
+}
     } else if (selectedPlan === 'Weekly Review Plan') { score = 100; }
 
     return {
