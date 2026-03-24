@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Button, ScrollView, ActivityIndicator, Modal } from 'react-native';
+import { View, Text, StyleSheet, Button, ScrollView, ActivityIndicator, Modal, Alert } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { ThemePreferenceContext } from '../context/ThemePreferenceContext';
 import { ScannedFoodContext } from '../context/ScannedFoodContext';
@@ -49,6 +49,17 @@ export default function ScanScreen({ navigation }) {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(false);
   const [overlayVisible, setOverlayVisible] = useState(false);
+
+  const handleAddToJournal = () => {
+    if (!product) {
+      return;
+    }
+
+    addScannedFood(product);
+    const productName = product.product_name || 'Product';
+    Alert.alert('Added to journal', `${productName} was added successfully.`);
+  };
+
   const sugarColour = (product) => {
     if(!product){
       return 'rgba(0,0,0,0.5)';
@@ -132,7 +143,7 @@ export default function ScanScreen({ navigation }) {
               {product && (
                 <Button
                   title = "Add to Journal"
-                  onPress = {() => addScannedFood(product)}
+                  onPress = {handleAddToJournal}
                 ></Button>
               )}
               <Button

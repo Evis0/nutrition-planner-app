@@ -3,6 +3,7 @@ import { Pressable, useColorScheme } from 'react-native'
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ThemePreferenceContext } from './src/context/ThemePreferenceContext';
 import { ScannedFoodContext } from './src/context/ScannedFoodContext';
 import { PlanProvider } from './src/context/PlanContext';
@@ -21,6 +22,7 @@ import { SettingsIcon } from './assets/tabIcons';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
+const SCANNED_FOODS_STORAGE_KEY = 'scannedFoods';
 
 export default function App() {
     const systemColorScheme = useColorScheme();
@@ -54,6 +56,43 @@ export default function App() {
     }), [themePreference, effectiveTheme]);
 
     const [scannedFoods, updateScannedFoods] = React.useState([]);
+    const [isScannedFoodsHydrated, setIsScannedFoodsHydrated] = React.useState(false);
+
+    React.useEffect(() => {
+        const loadScannedFoods = async () => {
+            try {
+                const savedFoods = await AsyncStorage.getItem(SCANNED_FOODS_STORAGE_KEY);
+                if (savedFoods) {
+                    updateScannedFoods(JSON.parse(savedFoods));
+                }
+            } catch (error) {
+                console.log('Error loading scanned foods:', error);
+            } finally {
+                setIsScannedFoodsHydrated(true);
+            }
+        };
+
+        loadScannedFoods();
+    }, []);
+
+    React.useEffect(() => {
+        if (!isScannedFoodsHydrated) {
+            return;
+        }
+
+        const persistScannedFoods = async () => {
+            try {
+                await AsyncStorage.setItem(
+                    SCANNED_FOODS_STORAGE_KEY,
+                    JSON.stringify(scannedFoods)
+                );
+            } catch (error) {
+                console.log('Error saving scanned foods:', error);
+            }
+        };
+
+        persistScannedFoods();
+    }, [scannedFoods, isScannedFoodsHydrated]);
 
     const addScannedFood = (product) => {
         updateScannedFoods(prev => [...prev, {
