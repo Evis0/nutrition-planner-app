@@ -278,7 +278,7 @@ export default function JournalScreen() {
       steps,
       water,
       hunger,
-      scannedFoodName: scannedFoods[0]?.name || 'None',
+      scannedFoodName: scannedFoods.map(food => food.name).join(', '),
       notes,
     };
 
