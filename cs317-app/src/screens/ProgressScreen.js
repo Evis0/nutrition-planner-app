@@ -30,7 +30,6 @@ export default function ProgressScreen() {
 
   const loadEntries = async () => {
     const saved = await AsyncStorage.getItem('journalEntries');
-    console.log("LOADED:", saved);
     if (saved) setEntries(JSON.parse(saved));
   };
 
