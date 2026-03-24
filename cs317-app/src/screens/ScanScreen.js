@@ -85,13 +85,13 @@ export default function ScanScreen({ navigation }) {
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <Text style={[styles.title, { color: colors.title }]}>Camera Permission Required</Text>
       <Button title="Grant Permission" onPress={requestPermission} />
+      <Text style={[styles.disclaimerText, { color: colors.subtitle }]}>This app is for informational tracking only and is not medical advice.</Text>
     </View>
     );
   } 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <Text style={[styles.title, { color: colors.title }]}>Food Awareness</Text>
-      <Text style={[styles.title, { color: colors.title }]}>this is not medical advice</Text>
       <View style={styles.cameraContainer}>
       <CameraView
        style={styles.camera}
@@ -158,6 +158,8 @@ export default function ScanScreen({ navigation }) {
           </View>
         </View>
       </Modal>
+
+      <Text style={[styles.disclaimerText, { color: colors.subtitle }]}>This app is for informational tracking only and is not medical advice.</Text>
     </View>
   ); 
 }
@@ -226,6 +228,13 @@ modalTitle: {
 },
 modalButtonGroup: {
   flexDirection: 'row'
+},
+disclaimerText: {
+  position: 'absolute',
+  bottom: 10,
+  fontSize: 12,
+  textAlign: 'center',
+  paddingHorizontal: 16,
 }
 });
 

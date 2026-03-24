@@ -145,6 +145,10 @@ export default function ProgressScreen() {
             ? "Moderate consistency 👍" : "Needs more consistency ⚠️"}
         </Text>
        </View>
+
+      <Text style={[styles.disclaimerText, { color: colors.subText }]}>
+        This app is for informational tracking only and is not medical advice.
+      </Text>
     </ScrollView>
   );
 }
@@ -174,5 +178,11 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight:"600",
     marginBottom: 10,
+  },
+  disclaimerText: {
+    fontSize: 12,
+    textAlign: 'center',
+    marginHorizontal: 16,
+    marginBottom: 20,
   },
 });

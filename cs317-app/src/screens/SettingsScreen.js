@@ -1,11 +1,13 @@
 import React from 'react';
 import { View, Text, StyleSheet, Pressable, ScrollView, TextInput, Modal } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ThemePreferenceContext } from '../context/ThemePreferenceContext';
 import { PlanContext } from '../context/PlanContext';
 
 const WHEEL_ITEM_HEIGHT = 36;
 const WHEEL_VISIBLE_ROWS = 5;
 const WHEEL_PADDING_ROWS = Math.floor(WHEEL_VISIBLE_ROWS / 2);
+const SETTINGS_STORAGE_KEY = 'settingsData';
 
 export default function SettingsScreen({ navigation }) {
   const { themePreference, setThemePreference, effectiveTheme } = React.useContext(ThemePreferenceContext);
@@ -56,6 +58,7 @@ const { selectedPlan, setSelectedPlan } = React.useContext(PlanContext);
   const [expandedPlanDetails, setExpandedPlanDetails] = React.useState(null);
   const [expandedHelpDetails, setExpandedHelpDetails] = React.useState(null);
   const [unitSystem, setUnitSystem] = React.useState('metric');
+  const [isSettingsHydrated, setIsSettingsHydrated] = React.useState(false);
   const [showBirthdayPicker, setShowBirthdayPicker] = React.useState(false);
   const [showGenderPicker, setShowGenderPicker] = React.useState(false);
   const [profileData, setProfileData] = React.useState({
@@ -89,6 +92,68 @@ const { selectedPlan, setSelectedPlan } = React.useContext(PlanContext);
   const dayOptions = Array.from({ length: maxDaysInMonth }, (_, index) => String(index + 1));
   const monthOptions = Array.from({ length: 12 }, (_, index) => String(index + 1));
   const [selectedGenderOption, setSelectedGenderOption] = React.useState(genderOptions[0]);
+
+  React.useEffect(() => {
+    const loadSettings = async () => {
+      try {
+        const savedSettings = await AsyncStorage.getItem(SETTINGS_STORAGE_KEY);
+        if (!savedSettings) {
+          return;
+        }
+
+        const parsedSettings = JSON.parse(savedSettings);
+
+        if (parsedSettings.unitSystem) {
+          setUnitSystem(parsedSettings.unitSystem);
+        }
+        if (parsedSettings.profileData) {
+          setProfileData((previous) => ({
+            ...previous,
+            ...parsedSettings.profileData,
+          }));
+        }
+        if (parsedSettings.accountData) {
+          setAccountData((previous) => ({
+            ...previous,
+            ...parsedSettings.accountData,
+          }));
+        }
+        if (parsedSettings.selectedPlan) {
+          setSelectedPlan(parsedSettings.selectedPlan);
+        }
+      } catch (error) {
+        console.log('Error loading settings:', error);
+      } finally {
+        setIsSettingsHydrated(true);
+      }
+    };
+
+    loadSettings();
+  }, [setSelectedPlan]);
+
+  React.useEffect(() => {
+    if (!isSettingsHydrated) {
+      return;
+    }
+
+    const persistSettings = async () => {
+      try {
+        await AsyncStorage.setItem(
+          SETTINGS_STORAGE_KEY,
+          JSON.stringify({
+            unitSystem,
+            profileData,
+            accountData,
+            selectedPlan,
+          })
+        );
+      } catch (error) {
+        console.log('Error saving settings:', error);
+      }
+    };
+
+    persistSettings();
+  }, [isSettingsHydrated, unitSystem, profileData, accountData, selectedPlan]);
 
   React.useEffect(() => {
     if (Number(birthdayDay) > maxDaysInMonth) {
@@ -546,7 +611,7 @@ const { selectedPlan, setSelectedPlan } = React.useContext(PlanContext);
         </View>
       </Modal>
 
-      <Text style={[styles.disclaimer, { color: colors.textMuted }]}>This is not medical advice.</Text>
+      <Text style={[styles.disclaimer, { color: colors.textMuted }]}>This app is for informational tracking only and is not medical advice.</Text>
     </ScrollView>
   ); 
 }
