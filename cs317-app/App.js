@@ -5,6 +5,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { ThemePreferenceContext } from './src/context/ThemePreferenceContext';
 import { ScannedFoodContext } from './src/context/ScannedFoodContext';
+import { PlanProvider } from './src/context/PlanContext';
 
 import SettingsScreen from './src/screens/SettingsScreen';
 import HomeScreen from './src/screens/HomeScreen';
@@ -73,6 +74,7 @@ export default function App() {
     return (
         <ThemePreferenceContext.Provider value={contextValue}>
             <ScannedFoodContext.Provider value = {scannedFoodsValue}>
+                <PlanProvider>
                 <NavigationContainer theme={navigationTheme}>
                     <Stack.Navigator
                         screenOptions={{
@@ -86,6 +88,7 @@ export default function App() {
                         <Stack.Screen name="Settings" component={SettingsScreen} />
                     </Stack.Navigator>
                 </NavigationContainer>
+                </PlanProvider>
             </ScannedFoodContext.Provider>
         </ThemePreferenceContext.Provider>
     )
