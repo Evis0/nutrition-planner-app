@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, Pressable, ScrollView, TextInput, Modal } from 'react-native';
 import { ThemePreferenceContext } from '../context/ThemePreferenceContext';
+import { PlanContext } from '../context/PlanContext';
 
 const WHEEL_ITEM_HEIGHT = 36;
 const WHEEL_VISIBLE_ROWS = 5;
@@ -51,7 +52,7 @@ export default function SettingsScreen({ navigation }) {
     help: false,
     plans: false,
   });
-  const [selectedPlan, setSelectedPlan] = React.useState(planOptions[0]);
+const { selectedPlan, setSelectedPlan } = React.useContext(PlanContext);
   const [expandedPlanDetails, setExpandedPlanDetails] = React.useState(null);
   const [expandedHelpDetails, setExpandedHelpDetails] = React.useState(null);
   const [unitSystem, setUnitSystem] = React.useState('metric');
