@@ -34,13 +34,14 @@ export default function ScanScreen({ navigation }) {
 
       if (json.status === 1){
         const fetchedProduct = json.product
+        //console.log(fetchedProduct);
   
         if(!checkProductValid(fetchedProduct)){
           setProduct(null)
-          console.log("Check 1")
+          // console.log("Check 1")
         } else {
           setProduct(fetchedProduct);
-          console.log("check2")
+          // console.log("check2")
         }
         setOverlayVisible(true);
       } else {
@@ -90,7 +91,12 @@ export default function ScanScreen({ navigation }) {
   const checkProductValid = (product) => {
     if (!product) {
       return false
-    } else if (product.nutriments.sugars_100g === undefined || product.nutrition_grades === undefined || product.nutriments.carbohydrates_100g === undefined) {
+    } 
+
+    const sugar = Number(product.nutriments.sugars_100g ?? product.nutriments_estimated.sugars_100g);
+    const carbs = Number(product.nutriments.carbohydrates_100g ?? product.nutriments_estimated.carbohydrates_100g)
+
+    if (Number.isNaN(sugar) || Number.isNaN(carbs)) {
       return false
     } else {
       return true
