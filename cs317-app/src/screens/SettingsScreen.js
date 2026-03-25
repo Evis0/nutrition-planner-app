@@ -28,17 +28,13 @@ export default function SettingsScreen({ navigation }) {
   const planOptions = [
     '14-Day Balanced Plate Plan',
     'Low-GI Swap Plan',
-    'Safe Weekly Fitness Plan',
     'Low-Sugar Prevention Plan',
-    'Weekly Review Plan',
   ];
 
   const planDetails = {
     '14-Day Balanced Plate Plan': 'Use the plate method for two weeks: half non-starchy vegetables, quarter lean protein, quarter high-fiber carbs. Keep meal timing regular and avoid sugary drinks to reduce sharp glucose rises.',
     'Low-GI Swap Plan': 'Replace common high-GI foods with lower-GI alternatives. Choose whole grains, legumes, and whole fruit. Pair carbohydrates with protein or healthy fats to slow glucose absorption.',
-    'Safe Weekly Fitness Plan': 'Aim for 5 sessions of 20-30 minutes of moderate cardio each week plus 2-3 light strength sessions. Check glucose before and after exercise and keep a fast-acting carb snack nearby.',
     'Low-Sugar Prevention Plan': 'Focus on preventing lows by not skipping meals, planning snacks around activity, and carrying quick carbs. Log low symptoms and events to identify patterns and triggers.',
-    'Weekly Review Plan': 'Once per week, review your food, activity, and glucose notes. Keep habits that helped and adjust one habit at a time with a realistic target for the next week.',
   };
 
   const helpDetails = {
