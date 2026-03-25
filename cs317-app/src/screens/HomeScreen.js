@@ -23,6 +23,9 @@ export default function HomeScreen({ navigation }) {
     accent: isDark ? '#22C55E' : '#2563EB',
     accentSoft: isDark ? '#143020' : '#DCEEFF',
     dangerSoft: isDark ? '#3A1D1D' : '#FDECEC',
+    good: '#22C55E',
+    mid: '#F59E0B',
+    bad: '#EF4444',
   };
 
   useFocusEffect(
@@ -63,8 +66,8 @@ export default function HomeScreen({ navigation }) {
       if (Number(latest.steps) > 20) score += 60;
       if (latest.energy === 'High') score += 40;
     } else if (selectedPlan === 'Low-Sugar Prevention Plan') {
-      if (latest.cravings === 'None') score += 50;
-      if (latest.mealBalance === 'Balanced') score += 50;
+      if (latest.cravings === 'None') score += 15;
+      if (latest.mealBalance === 'Balanced') score += 10;
     } else if (selectedPlan === 'Weekly Review Plan') {
       score = 100;
     }
@@ -74,6 +77,18 @@ export default function HomeScreen({ navigation }) {
 
   const recentScannedFoods = React.useMemo(() => scannedFoods.slice(-5).reverse(), [scannedFoods]);
 
+  const progressColor = React.useMemo(() => {
+    if (progressPercent > 70) {
+      return colors.good;
+    }
+
+    if (progressPercent > 40) {
+      return colors.mid;
+    }
+
+    return colors.bad;
+  }, [progressPercent, colors.good, colors.mid, colors.bad]);
+
   return (
     <ScrollView contentContainerStyle={[styles.container, { backgroundColor: colors.page }]}> 
       <Text style={[styles.title, { color: colors.textPrimary }]}>Food Awareness</Text>
@@ -81,14 +96,15 @@ export default function HomeScreen({ navigation }) {
 
       <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border }]}> 
         <Text style={[styles.cardTitle, { color: colors.textPrimary }]}>Goal Progress</Text>
-        <Text style={[styles.progressNumber, { color: colors.textPrimary }]}>{progressPercent}%</Text>
+        <Text style={[styles.goalName, { color: colors.accent }]}>{selectedPlan}</Text>
+        <Text style={[styles.progressNumber, { color: progressColor }]}>{progressPercent}%</Text>
         <View style={[styles.progressTrack, { backgroundColor: colors.border }]}> 
           <View
             style={[
               styles.progressFill,
               {
                 width: `${Math.max(0, Math.min(progressPercent, 100))}%`,
-                backgroundColor: colors.accent,
+                backgroundColor: progressColor,
               },
             ]}
           />
@@ -167,6 +183,11 @@ const styles = StyleSheet.create({
   cardTitle: {
     fontSize: 18,
     fontWeight: '700',
+    marginBottom: 8,
+  },
+  goalName: {
+    fontSize: 13,
+    fontWeight: '600',
     marginBottom: 8,
   },
   progressNumber: {

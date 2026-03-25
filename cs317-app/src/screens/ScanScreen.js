@@ -35,6 +35,7 @@ export default function ScanScreen({ navigation }) {
 
       if (json.status === 1){
         setProduct(json.product);
+        addScannedFood(json.product);
       } else {
         setProduct(null);
       }
@@ -55,13 +56,13 @@ export default function ScanScreen({ navigation }) {
       return;
     }
 
-    addScannedFood(product);
     const productName = product.product_name || 'Product';
-    Alert.alert('Added to journal', `${productName} was added successfully.`);
+    Alert.alert('Saved in recent scans', `${productName} is already in your recent scans.`);
   };
 
   const sugarColour = (product) => {
-    if(!product){
+
+    if(!product || product.nutriments.sugars_100g === undefined){
       return 'rgba(0,0,0,0.5)';
     }
 
@@ -71,8 +72,10 @@ export default function ScanScreen({ navigation }) {
       return 'rgba(0,175,0,0.5)';
     } else if(sugar < 15) {
       return 'rgba(255,165,0,0.5)';
-    } else {
+    } else if(sugar >= 15) {
       return 'rgba(212, 4, 4, 0.5)';
+    } else {
+      return 'rgba(0, 17, 253, 0.5)';
     }
   }
 
