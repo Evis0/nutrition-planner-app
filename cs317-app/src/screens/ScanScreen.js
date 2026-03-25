@@ -17,7 +17,7 @@ export default function ScanScreen({ navigation }) {
     text: isDark ? '#E5E7EB' : '#111827',
     card: isDark ? '#111315' : '#F8F9FB'
   };
-  const {addScannedFood} = React.useContext(ScannedFoodContext);
+  const { addRecentScannedFood, addJournalScannedFood } = React.useContext(ScannedFoodContext);
   const [scanned, setScanned] = useState(false);
   const [barcode, setBarcode] = useState('');
   const [zoom, setZoom] = useState(0);
@@ -52,6 +52,7 @@ export default function ScanScreen({ navigation }) {
           // console.log("Check 1")
         } else {
           setProduct(fetchedProduct);
+          addRecentScannedFood(fetchedProduct);
           // console.log("check2")
         }
         setOverlayVisible(true);
@@ -75,9 +76,10 @@ export default function ScanScreen({ navigation }) {
     if (!product) {
       return;
     }
-    addScannedFood(product);
+
+    addJournalScannedFood(product);
     const productName = product.product_name || 'Product';
-    Alert.alert('Saved in recent scans', `${productName} is already in your recent scans.`);
+    Alert.alert('Added to journal', `${productName} was added to journal foods.`);
   };
 
   const sugarColour = (product) => {

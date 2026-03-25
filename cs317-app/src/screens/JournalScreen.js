@@ -60,7 +60,7 @@ export default function JournalScreen() {
   //   },
   // ]);
 
-  const { scannedFoods, setScannedFoods } = React.useContext(ScannedFoodContext);
+  const { journalScannedFoods, setJournalScannedFoods } = React.useContext(ScannedFoodContext);
   // Handler to delete a scanned food item by id
   const handleDeleteScannedFood = (id) => {
     Alert.alert('Delete scanned food', 'Are you sure you want to remove this scanned food item?', [
@@ -69,7 +69,7 @@ export default function JournalScreen() {
         text: 'Delete',
         style: 'destructive',
         onPress: () => {
-          setScannedFoods((prevFoods) => prevFoods.filter((food) => food.id !== id));
+          setJournalScannedFoods((prevFoods) => prevFoods.filter((food) => food.id !== id));
         },
       },
     ]);
@@ -291,7 +291,7 @@ export default function JournalScreen() {
       steps,
       water,
       hunger,
-      scannedFoodName: scannedFoods.map(food => food.name).join(', '),
+      scannedFoodName: journalScannedFoods.map(food => food.name).join(', '),
       notes,
     };
 
@@ -459,7 +459,7 @@ export default function JournalScreen() {
         </View>
 
         <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>Foods Scanned Today</Text>
-        {scannedFoods.map((food) => (
+        {journalScannedFoods.map((food) => (
           <View key={food.id} style={[styles.foodCard, { backgroundColor: colors.card, borderColor: colors.border }]}> 
             <Text style={[styles.foodName, { color: colors.textPrimary }]}>{food.name}</Text>
             <Text style={[styles.foodText, { color: colors.textSecondary }]}>Barcode: {food.barcode}</Text>

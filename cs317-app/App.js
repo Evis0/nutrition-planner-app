@@ -23,6 +23,7 @@ import { SettingsIcon } from './assets/tabIcons';
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 const SCANNED_FOODS_STORAGE_KEY = 'scannedFoods';
+const JOURNAL_SCANNED_FOODS_STORAGE_KEY = 'journalScannedFoods';
 
 export default function App() {
     const systemColorScheme = useColorScheme();
@@ -56,14 +57,23 @@ export default function App() {
     }), [themePreference, effectiveTheme]);
 
     const [scannedFoods, updateScannedFoods] = React.useState([]);
+    const [journalScannedFoods, updateJournalScannedFoods] = React.useState([]);
     const [isScannedFoodsHydrated, setIsScannedFoodsHydrated] = React.useState(false);
 
     React.useEffect(() => {
         const loadScannedFoods = async () => {
             try {
-                const savedFoods = await AsyncStorage.getItem(SCANNED_FOODS_STORAGE_KEY);
+                const [savedFoods, savedJournalFoods] = await Promise.all([
+                    AsyncStorage.getItem(SCANNED_FOODS_STORAGE_KEY),
+                    AsyncStorage.getItem(JOURNAL_SCANNED_FOODS_STORAGE_KEY),
+                ]);
+
                 if (savedFoods) {
                     updateScannedFoods(JSON.parse(savedFoods));
+                }
+
+                if (savedJournalFoods) {
+                    updateJournalScannedFoods(JSON.parse(savedJournalFoods));
                 }
             } catch (error) {
                 console.log('Error loading scanned foods:', error);
@@ -82,20 +92,37 @@ export default function App() {
 
         const persistScannedFoods = async () => {
             try {
-                await AsyncStorage.setItem(
-                    SCANNED_FOODS_STORAGE_KEY,
-                    JSON.stringify(scannedFoods)
-                );
+                await Promise.all([
+                    AsyncStorage.setItem(
+                        SCANNED_FOODS_STORAGE_KEY,
+                        JSON.stringify(scannedFoods)
+                    ),
+                    AsyncStorage.setItem(
+                        JOURNAL_SCANNED_FOODS_STORAGE_KEY,
+                        JSON.stringify(journalScannedFoods)
+                    ),
+                ]);
             } catch (error) {
                 console.log('Error saving scanned foods:', error);
             }
         };
 
         persistScannedFoods();
-    }, [scannedFoods, isScannedFoodsHydrated]);
+    }, [scannedFoods, journalScannedFoods, isScannedFoodsHydrated]);
 
     const addScannedFood = (product) => {
         updateScannedFoods(prev => [...prev, {
+            id: Date.now(),
+            barcode: product.code,
+            name: product.product_name,
+            mealType: 'Snack',
+            carbs: product.nutriments.carbohydrates_100g + 'g',
+            sugars: product.nutriments.sugars_100g + 'g'
+        }]);
+    }
+
+    const addJournalScannedFood = (product) => {
+        updateJournalScannedFoods(prev => [...prev, {
             id: Date.now(),
             barcode: product.code,
             name: product.product_name,
@@ -109,12 +136,21 @@ export default function App() {
         updateScannedFoods([]);
     }
 
+    const deleteJournalScannedFoods = () => {
+        updateJournalScannedFoods([]);
+    }
+
     const scannedFoodsValue = React.useMemo(() => ({
         scannedFoods,
         setScannedFoods: updateScannedFoods,
+        journalScannedFoods,
+        setJournalScannedFoods: updateJournalScannedFoods,
         addScannedFood,
-        deleteScannedFoods
-    }), [scannedFoods]);
+        addRecentScannedFood: addScannedFood,
+        addJournalScannedFood,
+        deleteScannedFoods,
+        deleteJournalScannedFoods,
+    }), [scannedFoods, journalScannedFoods]);
 
     return (
         <ThemePreferenceContext.Provider value={contextValue}>
