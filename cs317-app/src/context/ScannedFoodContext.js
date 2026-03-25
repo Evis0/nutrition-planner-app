@@ -4,6 +4,7 @@ export const ScannedFoodContext = React.createContext({
   scannedFoods: [],
   setScannedFoods: () => {},
   addScannedFood: () => {},
+  deleteScannedFoods: () => []
 });
 
 export const ScannedFoodProvider = ({ children }) => {
