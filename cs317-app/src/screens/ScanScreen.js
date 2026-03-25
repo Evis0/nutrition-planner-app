@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Button, ScrollView, ActivityIndicator, Modal, Alert } from 'react-native';
+import { View, Text, StyleSheet, Button, ScrollView, ActivityIndicator, Modal, Alert, Pressable } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { ThemePreferenceContext } from '../context/ThemePreferenceContext';
 import { ScannedFoodContext } from '../context/ScannedFoodContext';
@@ -20,7 +20,18 @@ export default function ScanScreen({ navigation }) {
   const {addScannedFood} = React.useContext(ScannedFoodContext);
   const [scanned, setScanned] = useState(false);
   const [barcode, setBarcode] = useState('');
+  const [zoom, setZoom] = useState(0);
   const [permission, requestPermission] = useCameraPermissions();
+
+  const clampZoom = (value) => Math.max(0, Math.min(1, value));
+
+  const updateZoom = (delta) => {
+    setZoom((previousZoom) => {
+      const nextZoom = clampZoom(previousZoom + delta);
+      return Number(nextZoom.toFixed(2));
+    });
+  };
+
   const handleBarcodeScanned = async ({ type, data }) => {
     setScanned(true);
     setBarcode(data);
@@ -98,9 +109,20 @@ export default function ScanScreen({ navigation }) {
       <View style={styles.cameraContainer}>
       <CameraView
        style={styles.camera}
+       zoom={zoom}
        onBarcodeScanned={scanned ? undefined : handleBarcodeScanned}
       />
       <View style={styles.barcodeBox} />
+      </View>
+
+      <View style={styles.zoomControlsRow}>
+        <Pressable style={styles.zoomButton} onPress={() => updateZoom(-0.1)}>
+          <Text style={styles.zoomButtonText}>-</Text>
+        </Pressable>
+        <Text style={[styles.zoomText, { color: colors.text }]}>Zoom: {Math.round(zoom * 100)}%</Text>
+        <Pressable style={styles.zoomButton} onPress={() => updateZoom(0.1)}>
+          <Text style={styles.zoomButtonText}>+</Text>
+        </Pressable>
       </View>
 
       {barcode ? <Text style={[styles.result, { color: colors.text }]}>Scanned barcode: {barcode}</Text> : null}
@@ -238,6 +260,32 @@ disclaimerText: {
   fontSize: 12,
   textAlign: 'center',
   paddingHorizontal: 16,
+},
+zoomControlsRow: {
+  width: '90%',
+  flexDirection: 'row',
+  justifyContent: 'center',
+  alignItems: 'center',
+  marginTop: 10,
+  gap: 14,
+},
+zoomButton: {
+  width: 40,
+  height: 40,
+  borderRadius: 20,
+  backgroundColor: '#2563EB',
+  alignItems: 'center',
+  justifyContent: 'center',
+},
+zoomButtonText: {
+  color: '#FFFFFF',
+  fontSize: 24,
+  fontWeight: '700',
+  lineHeight: 26,
+},
+zoomText: {
+  fontSize: 15,
+  fontWeight: '600',
 }
 });
 
