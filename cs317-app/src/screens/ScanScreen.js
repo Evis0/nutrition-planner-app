@@ -137,16 +137,15 @@ export default function ScanScreen({ navigation }) {
        onBarcodeScanned={scanned ? undefined : handleBarcodeScanned}
       />
       <View style={styles.barcodeBox} />
-      </View>
-
       <View style={styles.zoomControlsRow}>
         <Pressable style={styles.zoomButton} onPress={() => updateZoom(-0.1)}>
           <Text style={styles.zoomButtonText}>-</Text>
         </Pressable>
-        <Text style={[styles.zoomText, { color: colors.text }]}>Zoom: {Math.round(zoom * 100)}%</Text>
+        <Text style={[styles.zoomText, { color: '#FFFFFF' }]}>Zoom: {Math.round(zoom * 100)}%</Text>
         <Pressable style={styles.zoomButton} onPress={() => updateZoom(0.1)}>
           <Text style={styles.zoomButtonText}>+</Text>
         </Pressable>
+      </View>
       </View>
 
       {barcode ? <Text style={[styles.result, { color: colors.text }]}>Scanned barcode: {barcode}</Text> : null}
@@ -286,12 +285,16 @@ disclaimerText: {
   paddingHorizontal: 16,
 },
 zoomControlsRow: {
-  width: '90%',
+  position: 'absolute',
+  bottom: 16,
+  left: 12,
+  right: 12,
   flexDirection: 'row',
   justifyContent: 'center',
   alignItems: 'center',
-  marginTop: 10,
   gap: 14,
+  zIndex: 10,
+  elevation: 6,
 },
 zoomButton: {
   width: 40,
