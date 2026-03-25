@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native';
 import { ThemePreferenceContext } from '../context/ThemePreferenceContext';
@@ -11,7 +11,7 @@ export default function HomeScreen({ navigation }) {
   const { scannedFoods } = React.useContext(ScannedFoodContext);
   const { selectedPlan } = React.useContext(PlanContext);
   const [entries, setEntries] = React.useState([]);
-  const {deleteScannedFoods} = React.useContext(ScannedFoodContext);
+  const { deleteScannedFoods, setScannedFoods } = React.useContext(ScannedFoodContext);
   const isDark = effectiveTheme === 'dark';
   const colors = {
     page: isDark ? '#111315' : '#F8F9FB',
@@ -89,6 +89,30 @@ export default function HomeScreen({ navigation }) {
     return colors.bad;
   }, [progressPercent, colors.good, colors.mid, colors.bad]);
 
+  const handleDeleteScannedFood = React.useCallback((id) => {
+    Alert.alert('Delete scanned food', 'Are you sure you want to remove this scanned food item?', [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Delete',
+        style: 'destructive',
+        onPress: () => {
+          setScannedFoods((prevFoods) => prevFoods.filter((food) => food.id !== id));
+        },
+      },
+    ]);
+  }, [setScannedFoods]);
+
+  const handleDeleteAllScannedFoods = React.useCallback(() => {
+    Alert.alert('Delete all scanned foods', 'Are you sure you want to clear all scanned food history?', [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Delete All',
+        style: 'destructive',
+        onPress: () => deleteScannedFoods(),
+      },
+    ]);
+  }, [deleteScannedFoods]);
+
   return (
     <ScrollView contentContainerStyle={[styles.container, { backgroundColor: colors.page }]}> 
       <Text style={[styles.title, { color: colors.textPrimary }]}>Food Awareness</Text>
@@ -135,13 +159,23 @@ export default function HomeScreen({ navigation }) {
                 <Text style={[styles.foodName, { color: colors.textPrimary }]}>{food.name || 'Unknown product'}</Text>
                 <Text style={[styles.foodMeta, { color: colors.textSecondary }]}>Meal: {food.mealType || 'N/A'} | Carbs: {food.carbs || 'N/A'} | Sugars: {food.sugars || 'N/A'}</Text>
               </View>
+              <Pressable
+                style={styles.foodDeleteButton}
+                onPress={() => handleDeleteScannedFood(food.id)}
+              >
+                <Text style={styles.foodDeleteText}>Delete</Text>
+              </Pressable>
             </View>
           ))
         )}
-        <Pressable 
-        style={[styles.actionButton, { backgroundColor: colors.accentSoft, borderColor: colors.border }]}
-        onPress={() => deleteScannedFoods() }/>
-        <Text style={[styles.actionButtonText, { color: colors.textPrimary }]}>Delete Scanned History</Text>
+        {recentScannedFoods.length > 0 && (
+          <Pressable
+            style={[styles.clearHistoryButton, { backgroundColor: colors.accentSoft, borderColor: colors.border }]}
+            onPress={handleDeleteAllScannedFoods}
+          >
+            <Text style={[styles.actionButtonText, { color: colors.textPrimary }]}>Delete Scanned History</Text>
+          </Pressable>
+        )}
       </View>
 
       <View style={styles.actionsRow}>
@@ -237,9 +271,14 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 12,
     marginTop: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   foodMain: {
     gap: 4,
+    flex: 1,
+    paddingRight: 8,
   },
   foodName: {
     fontSize: 15,
@@ -248,6 +287,22 @@ const styles = StyleSheet.create({
   foodMeta: {
     fontSize: 13,
     lineHeight: 18,
+  },
+  foodDeleteButton: {
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+  },
+  foodDeleteText: {
+    color: '#B91C1C',
+    fontWeight: '700',
+    fontSize: 13,
+  },
+  clearHistoryButton: {
+    borderWidth: 1,
+    borderRadius: 12,
+    paddingVertical: 12,
+    alignItems: 'center',
+    marginTop: 12,
   },
   actionsRow: {
     flexDirection: 'row',
