@@ -299,7 +299,7 @@ zoomButtonText: {
   color: '#FFFFFF',
   fontSize: 24,
   fontWeight: '700',
-  lineHeight: 26,
+  lineHeight: 25,
 },
 zoomText: {
   fontSize: 15,
