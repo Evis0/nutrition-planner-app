@@ -64,9 +64,8 @@ export default function ScanScreen({ navigation }) {
       return;
     }
 
-    addScannedFood(product);
     const productName = product.product_name || 'Product';
-    Alert.alert('Added to journal', `${productName} was added successfully.`);
+    Alert.alert('Saved in recent scans', `${productName} is already in your recent scans.`);
   };
 
   const sugarColour = (product) => {
