@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ThemePreferenceContext } from '../context/ThemePreferenceContext';
-import {ScannedFoodContext} from '../context/ScannedFoodContext';
+import { ScannedFoodContext } from '../context/ScannedFoodContext';
 
 export default function JournalScreen() {
   const LIVE_STEPS_STORAGE_KEY = 'journalLiveSteps';
@@ -60,7 +60,20 @@ export default function JournalScreen() {
   //   },
   // ]);
 
-  const {scannedFoods} = React.useContext(ScannedFoodContext);
+  const { scannedFoods, setScannedFoods } = React.useContext(ScannedFoodContext);
+  // Handler to delete a scanned food item by id
+  const handleDeleteScannedFood = (id) => {
+    Alert.alert('Delete scanned food', 'Are you sure you want to remove this scanned food item?', [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Delete',
+        style: 'destructive',
+        onPress: () => {
+          setScannedFoods((prevFoods) => prevFoods.filter((food) => food.id !== id));
+        },
+      },
+    ]);
+  };
 
   const [entries, setEntries] = useState([
     {
@@ -447,12 +460,18 @@ export default function JournalScreen() {
 
         <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>Foods Scanned Today</Text>
         {scannedFoods.map((food) => (
-          <View key={food.id} style={[styles.foodCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+          <View key={food.id} style={[styles.foodCard, { backgroundColor: colors.card, borderColor: colors.border }]}> 
             <Text style={[styles.foodName, { color: colors.textPrimary }]}>{food.name}</Text>
             <Text style={[styles.foodText, { color: colors.textSecondary }]}>Barcode: {food.barcode}</Text>
             <Text style={[styles.foodText, { color: colors.textSecondary }]}>Meal: {food.mealType}</Text>
             <Text style={[styles.foodText, { color: colors.textSecondary }]}>Carbs: {food.carbs}</Text>
             <Text style={[styles.foodText, { color: colors.textSecondary }]}>Sugars: {food.sugars}</Text>
+            <Pressable
+              style={{ marginTop: 8, alignSelf: 'flex-end', backgroundColor: '#FEE2E2', borderRadius: 8, paddingVertical: 4, paddingHorizontal: 10 }}
+              onPress={() => handleDeleteScannedFood(food.id)}
+            >
+              <Text style={{ color: '#B91C1C', fontWeight: '700', fontSize: 13 }}>Delete</Text>
+            </Pressable>
           </View>
         ))}
 

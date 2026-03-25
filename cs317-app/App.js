@@ -111,6 +111,7 @@ export default function App() {
 
     const scannedFoodsValue = React.useMemo(() => ({
         scannedFoods,
+        setScannedFoods: updateScannedFoods,
         addScannedFood,
         deleteScannedFoods
     }), [scannedFoods]);
