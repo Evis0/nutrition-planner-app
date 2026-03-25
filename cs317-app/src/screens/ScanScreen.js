@@ -61,7 +61,8 @@ export default function ScanScreen({ navigation }) {
   };
 
   const sugarColour = (product) => {
-    if(!product){
+
+    if(!product || product.nutriments.sugars_100g === undefined){
       return 'rgba(0,0,0,0.5)';
     }
 
@@ -71,8 +72,10 @@ export default function ScanScreen({ navigation }) {
       return 'rgba(0,175,0,0.5)';
     } else if(sugar < 15) {
       return 'rgba(255,165,0,0.5)';
-    } else {
+    } else if(sugar >= 15) {
       return 'rgba(212, 4, 4, 0.5)';
+    } else {
+      return 'rgba(0, 17, 253, 0.5)';
     }
   }
 
