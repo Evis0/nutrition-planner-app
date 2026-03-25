@@ -11,7 +11,7 @@ export default function HomeScreen({ navigation }) {
   const { scannedFoods } = React.useContext(ScannedFoodContext);
   const { selectedPlan } = React.useContext(PlanContext);
   const [entries, setEntries] = React.useState([]);
-
+  const {deleteScannedFoods} = React.useContext(ScannedFoodContext);
   const isDark = effectiveTheme === 'dark';
   const colors = {
     page: isDark ? '#111315' : '#F8F9FB',
@@ -122,6 +122,10 @@ export default function HomeScreen({ navigation }) {
             </View>
           ))
         )}
+        <Pressable 
+        style={[styles.actionButton, { backgroundColor: colors.accentSoft, borderColor: colors.border }]}
+        onPress={() => deleteScannedFoods() }/>
+        <Text style={[styles.actionButtonText, { color: colors.textPrimary }]}>Delete Scanned History</Text>
       </View>
 
       <View style={styles.actionsRow}>
