@@ -51,7 +51,6 @@ export default function ScanScreen({ navigation }) {
           console.log("Check 1")
         } else {
           setProduct(fetchedProduct);
-          addScannedFood(json.product);
           console.log("check2")
         }
         setOverlayVisible(true);
@@ -75,7 +74,7 @@ export default function ScanScreen({ navigation }) {
     if (!product) {
       return;
     }
-
+    addScannedFood(product);
     const productName = product.product_name || 'Product';
     Alert.alert('Saved in recent scans', `${productName} is already in your recent scans.`);
   };
