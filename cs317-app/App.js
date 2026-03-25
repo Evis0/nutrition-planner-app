@@ -105,9 +105,15 @@ export default function App() {
         }]);
     }
 
+    const deleteScannedFoods = () => {
+        updateScannedFoods([]);
+    }
+
     const scannedFoodsValue = React.useMemo(() => ({
         scannedFoods,
-        addScannedFood
+        setScannedFoods: updateScannedFoods,
+        addScannedFood,
+        deleteScannedFoods
     }), [scannedFoods]);
 
     return (
