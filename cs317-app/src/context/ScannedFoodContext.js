@@ -9,7 +9,6 @@ export const ScannedFoodContext = React.createContext({
 
 export const ScannedFoodProvider = ({ children }) => {
   const [scannedFoods, setScannedFoods] = useState([]);
-
   const addScannedFood = (food) => {
     setScannedFoods((prevFoods) => [...prevFoods, food]);
   };

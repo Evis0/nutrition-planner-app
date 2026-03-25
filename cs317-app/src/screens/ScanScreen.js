@@ -51,6 +51,7 @@ export default function ScanScreen({ navigation }) {
           console.log("Check 1")
         } else {
           setProduct(fetchedProduct);
+          addScannedFood(json.product);
           console.log("check2")
         }
         setOverlayVisible(true);
