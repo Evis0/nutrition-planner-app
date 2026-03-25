@@ -25,7 +25,6 @@ export default function ScanScreen({ navigation }) {
     setScanned(true);
     setBarcode(data);
     setLoading(true);
-    setOverlayVisible(true);
     console.log('Barcode type:', type);
     console.log('Barcode data:', data);
 
@@ -34,9 +33,19 @@ export default function ScanScreen({ navigation }) {
       const json = await apiResponse.json();
 
       if (json.status === 1){
-        setProduct(json.product);
+        const fetchedProduct = json.product
+  
+        if(!checkProductValid(fetchedProduct)){
+          setProduct(null)
+          console.log("Check 1")
+        } else {
+          setProduct(fetchedProduct);
+          console.log("check2")
+        }
+        setOverlayVisible(true);
       } else {
         setProduct(null);
+        setOverlayVisible(true);
       }
     
     } catch (e) {
@@ -62,7 +71,7 @@ export default function ScanScreen({ navigation }) {
 
   const sugarColour = (product) => {
 
-    if(!product || product.nutriments.sugars_100g === undefined){
+    if(!product){
       return 'rgba(0,0,0,0.5)';
     }
 
@@ -76,6 +85,16 @@ export default function ScanScreen({ navigation }) {
       return 'rgba(212, 4, 4, 0.5)';
     } else {
       return 'rgba(0, 17, 253, 0.5)';
+    }
+  }
+
+  const checkProductValid = (product) => {
+    if (!product) {
+      return false
+    } else if (product.nutriments.sugars_100g === undefined || product.nutrition_grades === undefined || product.nutriments.carbohydrates_100g === undefined) {
+      return false
+    } else {
+      return true
     }
   }
 
