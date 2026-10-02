@@ -1,4 +1,5 @@
-Nutrition & Meal Planner Mobile App
+**Nutrition & Meal Planner Mobile App**
+
 A React Native mobile application built with Expo designed to help users track daily food intake, log meals, scan barcodes to fetch detailed nutritional information, and monitor health goals with dynamic theme customization.
 
 Key Features
